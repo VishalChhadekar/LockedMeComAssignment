@@ -7,74 +7,67 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class LockedmeDriver {
 	public static void main(String[] args) throws IOException {
 		System.out.println("Welcome to the LockedMe.com");
 		System.out.println("Developed by; \n	Name: Er. Vishal Chhadekar \n" + "	Role: Full Stack Developer");
-		System.out.println("Tell us how can we  help you? \nChoose the following options:");
+		System.out.println("Tell us how can we  help you? \nChoose the following options (Enter only Integer):");
 		System.out.println();
 		System.out.println("1. To get all files from directory in ascending order\n"
 				+ "2. To perform business operations \n3. Back to the main menu\n" + "4. To close the application ");
-		Scanner userInput = new Scanner(System.in);
-		int userResponse = userInput.nextInt();
 
-		// use switch statement to perform further operations
-		switch (userResponse) {
+		try (Scanner userInput = new Scanner(System.in)) {
+			int userResponse = userInput.nextInt();
 
-		case 1:
-			// call a method to sort files directory in ascending order
-			getDirectory();
-			break;
-		case 2:
-			performBusinessOperations();
-			int in = userInput.nextInt();
-			switch (in) {
+			// use switch statement to perform further operations
+			switch (userResponse) {
+
 			case 1:
-				// take users details
-				String name = userInput.next();
-				String address = userInput.next();
-				long mobNumber = userInput.nextLong();
-				int age = userInput.nextInt();
-				// call a method to add a new file
-				String path = new String("B://UserFilesDirectory//");
-				createFileUsingFileClass(path, name, address, mobNumber, age);
-
+				// call a method to sort files directory in ascending order
+				getDirectory();
 				break;
 			case 2:
-				// delete a file
-				String userName = userInput.next();
-				deleteFile(userName);
+				performBusinessOperations();
+				int in = userInput.nextInt();
+				businessOperations(in);
+
 				break;
 			case 3:
-				// Search a file by it's name
-				String userName1 = userInput.next();
-
-				File file = getUserFile("B://UserFilesDirectory//", userName1 + ".txt");
-				if (!(file == null)) {
-					System.out.println("File exists, Successful operation");
-					System.out.println(file.getName());
-				} else {
-					System.out.println("FNF, unsuccessful operation");
-				}
+				// Navigate the main menu (i.e. repeat the process from 1)
+				System.out.println("Back to the main menu");
+				performBusinessOperations();
+				int input = userInput.nextInt();
+				businessOperations(input);
 				break;
-
+			case 4:
+				// close the application
+				System.out.println("Are you sure, want to exit? \nEnter Yes or No");
+				String existResponse = userInput.next();
+				if (existResponse.equals("Yes")) {
+					System.out.println("Thank you for using Lockedme.com");
+					System.exit(0);
+				} else if (existResponse.equals("No")) {
+					System.out.println("Welcome Back");
+					performBusinessOperations();
+					int input1 = userInput.nextInt();
+					businessOperations(input1);
+					// call a method to start further operations
+				} else
+					System.out.println("Invalid entry");
+				break;
+			// Default case statement
+			default:
+				System.out.println("Invalid Entry, please try again!");
+				System.out.println("Thank you for using the Lockme.com");
 			}
-			break;
-		case 3:
-			// Navigate the main menu (i.e. repeat the process from 1)
 
-			break;
-		case 4:
-			// close the application
-			System.exit(0);
-			break;
-		// Default case statement
-		default:
-			System.out.println("Invalid Entry, please try again!");
-			System.out.println("Thank you for using the Lockme.com");
+		} catch (Exception e) {
+			System.out.println("Invalid Entry. Please try again-Enter only Integer values");
 		}
 
 	}
@@ -84,9 +77,14 @@ public class LockedmeDriver {
 		String path = new String("B://UserFilesDirectory//");
 		File file = new File(path);
 		File getDirectory[] = file.listFiles();
-		Arrays.sort(getDirectory);
+		List<File> userFileDirectory = new ArrayList<>();
+//		Arrays.sort(getDirectory);
 
 		for (File ele : getDirectory) {
+			userFileDirectory.add(ele);
+		}
+		Collections.sort(userFileDirectory);
+		for (File ele : userFileDirectory) {
 			System.out.println(ele.getName());
 		}
 
@@ -112,7 +110,6 @@ public class LockedmeDriver {
 		WritingUserDetials.close();
 	}
 
-	
 	public static void performBusinessOperations() {
 		System.out.println("Choose following options:");
 		System.out.println("1. To add a file to the directory\n" + "2. To delete a file\n3. To search a file");
@@ -144,6 +141,42 @@ public class LockedmeDriver {
 			System.out.println("Invalid permissions.");
 		}
 		System.out.println("Deletion successful.");
+	}
+
+	public static void businessOperations(int input) throws IOException {
+		Scanner userInput = new Scanner(System.in);
+		switch (input) {
+		case 1:
+			// take users details
+			String name = userInput.next();
+			String address = userInput.next();
+			long mobNumber = userInput.nextLong();
+			int age = userInput.nextInt();
+			// call a method to add a new file
+			String path = new String("B://UserFilesDirectory//");
+			createFileUsingFileClass(path, name, address, mobNumber, age);
+
+			break;
+		case 2:
+			// delete a file
+			String userName = userInput.next();
+			deleteFile(userName);
+			break;
+		case 3:
+			// Search a file by it's name
+			String userName1 = userInput.next();
+
+			File file = getUserFile("B://UserFilesDirectory//", userName1 + ".txt");
+			if (!(file == null)) {
+				System.out.println("File exists, Successful operation");
+				System.out.println(file.getName());
+			} else {
+				System.out.println("FNF, unsuccessful operation");
+			}
+			break;
+
+		}
+
 	}
 
 }
